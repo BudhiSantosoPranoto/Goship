@@ -11,23 +11,42 @@ GoShip adalah platform marketplace/logistics untuk mempertemukan pemilik barang 
 
 ## 3. Sisi Pemilik Barang
 Pemilik barang membuat kebutuhan pengiriman dengan informasi utama:
-- lokasi/pelabuhan asal;
-- lokasi/pelabuhan tujuan;
-- jenis barang/kargo;
-- jumlah/tonase;
-- jadwal atau tanggal kebutuhan muat;
-- budget/target harga, yang boleh dikosongkan (Rp 0) bila pemilik barang ingin menerima penawaran pasar.
+- **Pelabuhan Asal** — pelabuhan tempat pemuatan barang.
+- **Pelabuhan Tujuan** — pelabuhan tempat pembongkaran barang.
+- **Jenis barang/kargo** — misalnya batu bara, nikel, pasir, atau barang tambang lainnya.
+- **Jumlah/tonase** — jumlah muatan yang akan diangkut.
+- **Tanggal/jadwal muat** — kapan kapal dibutuhkan untuk melakukan pemuatan.
+- **Budget/target harga** — boleh diisi dengan nilai tertentu atau `0`/kosong bila pemilik barang ingin menerima penawaran harga dari operator kapal.
+- **Catatan kebutuhan** — informasi tambahan yang relevan dengan pengiriman.
+- **Dokumen pendukung** — opsional pada prototype, dapat dikembangkan untuk dokumen cargo/order.
+
+### 3.1 Aturan Budget
+Terdapat dua mode request:
+
+**Budget > 0**
+- Pemilik barang memberikan target harga.
+- Operator kapal dapat menerima harga tersebut atau memberikan counter-offer.
+
+**Budget = 0 / kosong**
+- Pemilik barang tidak menentukan harga.
+- Operator kapal yang memenuhi syarat dapat menentukan harga penawarannya sendiri.
+- Pemilik barang membandingkan beberapa penawaran dan memilih yang paling sesuai.
+
+### 3.2 Prinsip Asal dan Tujuan
+Untuk kebutuhan pengangkutan laut, field UI dan model bisnis menggunakan istilah **Pelabuhan Asal** dan **Pelabuhan Tujuan**, bukan sekadar "Asal" dan "Tujuan". Ini menjadi keputusan penting karena matching kapal dilakukan terhadap pelabuhan muat/bongkar dan radius posisi kapal dari pelabuhan asal.
 
 ## 4. Matching Kapal
 Sistem mencari kapal yang sesuai berdasarkan antara lain:
 - status availability/open position;
-- posisi/lokasi kapal terhadap pelabuhan asal;
-- radius jangkauan dari lokasi muat;
+- posisi/lokasi kapal terhadap **Pelabuhan Asal**;
+- radius jangkauan dari pelabuhan asal;
 - kapasitas kapal;
 - jenis kapal dan kesesuaian dengan kargo;
 - jadwal/kesiapan kapal.
 
 Order yang cocok dikirim sebagai notifikasi kepada perusahaan/operator kapal dan, bila diperlukan, nahkoda/pihak kapal yang berwenang.
+
+Jenis kapal tidak harus selalu dipilih manual oleh pemilik barang. GoShip dapat menentukan kapal yang compatible berdasarkan kebutuhan muatan dan parameter matching. Untuk prototype, aturan matching dapat dibuat sederhana terlebih dahulu.
 
 ## 5. Mekanisme Penawaran
 Beberapa perusahaan kapal dapat merespons kebutuhan pengiriman yang sama.
