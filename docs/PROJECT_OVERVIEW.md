@@ -48,6 +48,19 @@ Order yang cocok dikirim sebagai notifikasi kepada **semua kapal/operator yang e
 
 Jenis kapal tidak harus selalu dipilih manual oleh pemilik barang. GoShip dapat menentukan kapal yang compatible berdasarkan kebutuhan muatan dan parameter matching. Untuk prototype, aturan matching dapat dibuat sederhana terlebih dahulu.
 
+### 4.1 Status Kapal dan Tracking
+Status operasional kapal sebaiknya **sebisa mungkin diperbarui otomatis** berdasarkan data posisi/tracking kapal, bukan bergantung sepenuhnya pada input manual nahkoda atau kantor pusat.
+
+GoShip direncanakan dapat mengintegrasikan sumber data GPS/AIS/tracking kapal melalui API atau mekanisme integrasi resmi yang tersedia dari perangkat/provider tracking kapal. Ketersediaan API dan hak akses harus diverifikasi per provider sebelum implementasi production.
+
+Data tracking dapat digunakan untuk membantu menentukan:
+- posisi kapal saat ini;
+- apakah kapal sedang bergerak atau berada di area pelabuhan;
+- estimasi waktu tiba (ETA);
+- status/availability operasional berdasarkan aturan bisnis GoShip.
+
+Untuk prototype, tracking dan perubahan status dapat disimulasikan terlebih dahulu.
+
 ## 5. Mekanisme Penawaran
 Beberapa perusahaan kapal dapat merespons kebutuhan pengiriman yang sama.
 
@@ -85,7 +98,63 @@ Alur inti prototype:
 
 `Request → Matching → Bidding/Offer → Selection → Booking/Order`
 
-## 6. Dasar Pemilihan
+## 6. Data Master Perusahaan dan Kapal
+### 6.1 Perusahaan/Operator
+Data utama perusahaan:
+- nama perusahaan/PT;
+- nama singkat;
+- NIB;
+- NPWP;
+- alamat;
+- nomor telepon;
+- email;
+- PIC dan nomor HP PIC;
+- status verifikasi GoShip;
+- status aktif/nonaktif.
+
+### 6.2 Kapal
+Data master kapal yang disiapkan minimal untuk prototype:
+- nama kapal;
+- IMO Number (bila ada);
+- MMSI;
+- Call Sign;
+- jenis kapal;
+- kapasitas muatan;
+- DWT;
+- panjang, lebar, dan draft;
+- tahun pembuatan;
+- bendera kapal;
+- pelabuhan pendaftaran;
+- kecepatan ekonomis;
+- kecepatan maksimum;
+- jenis cargo yang dapat diangkut;
+- foto kapal.
+
+### 6.3 Legalitas/Dokumen
+Data dokumen kapal dapat mencakup:
+- jenis dokumen;
+- nomor dokumen;
+- tanggal terbit;
+- tanggal berlaku/kedaluwarsa;
+- status verifikasi;
+- tanggal verifikasi;
+- petugas/verifikator.
+
+Data dokumen menjadi bagian penting dari proses verifikasi kapal GoShip.
+
+### 6.4 Data Operasional
+Data operasional dipisahkan dari master kapal karena nilainya berubah:
+- status kapal (`Available`, `On Trip`, `Loading`, `Unloading`, `Maintenance`, `Inactive`, dll.);
+- posisi kapal;
+- pelabuhan/lokasi terakhir;
+- tujuan perjalanan saat ini;
+- ETA;
+- jadwal available berikutnya;
+- keterangan operasional.
+
+Status dan posisi diharapkan dapat diperbarui otomatis melalui integrasi tracking jika tersedia; input manual dapat menjadi fallback/override dengan aturan audit yang jelas.
+
+## 7. Dasar Pemilihan
 Pemilihan kapal/operator sebaiknya tidak hanya berdasarkan harga. Faktor yang dapat ditampilkan:
 - harga penawaran;
 - reputasi/rating perusahaan;
@@ -96,7 +165,7 @@ Pemilihan kapal/operator sebaiknya tidak hanya berdasarkan harga. Faktor yang da
 - estimasi waktu tiba/availability;
 - status dan kelengkapan dokumen.
 
-## 7. Multi-Level Operator
+## 8. Multi-Level Operator
 Satu perusahaan dapat memiliki banyak kapal. Karena itu sistem perlu membedakan:
 - perusahaan/operator kapal;
 - armada/kapal milik atau dikelola perusahaan;
@@ -105,7 +174,7 @@ Satu perusahaan dapat memiliki banyak kapal. Karena itu sistem perlu membedakan:
 
 Notifikasi dan proses approval dapat melibatkan kantor pusat maupun user kapal sesuai aturan perusahaan.
 
-## 8. Fitur Pengembangan Lanjutan
+## 9. Fitur Pengembangan Lanjutan
 Roadmap awal yang potensial:
 - tracking posisi kapal/AIS;
 - status kapal real-time;
@@ -118,7 +187,7 @@ Roadmap awal yang potensial:
 - verifikasi dokumen dan masa berlaku dokumen;
 - sistem matching dan rekomendasi kapal.
 
-## 9. Nilai Utama GoShip
+## 10. Nilai Utama GoShip
 Nilai strategis GoShip bukan sekadar mempertemukan pemilik barang dan kapal, tetapi membangun **database armada dan availability kapal yang terverifikasi** sehingga pemilik barang dapat menemukan kapasitas angkutan yang terpercaya secara lebih cepat dan transparan.
 
 > Catatan: angka harga dalam contoh di atas hanya ilustrasi. Satuan tarif (per ton, per kg, per trip, dll.) harus ditentukan secara eksplisit dalam desain bisnis dan sistem sebelum implementasi.
