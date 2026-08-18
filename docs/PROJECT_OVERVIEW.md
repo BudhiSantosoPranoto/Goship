@@ -46,9 +46,20 @@ Sistem mencari kapal yang sesuai berdasarkan antara lain:
 
 Order yang cocok dikirim sebagai notifikasi kepada **semua kapal/operator yang eligible hasil matching**, bukan satu per satu secara bergiliran. Untuk prototype, jumlah kandidat dapat dibatasi (misalnya 10 kandidat terbaik) berdasarkan skor matching agar notifikasi tetap relevan.
 
-Jenis kapal tidak harus selalu dipilih manual oleh pemilik barang. GoShip dapat menentukan kapal yang compatible berdasarkan kebutuhan muatan dan parameter matching. Untuk prototype, aturan matching dapat dibuat sederhana terlebih dahulu.
+### 4.1 Dual Approval Pihak Kapal Sebelum Offer
+Ketika sebuah request dikirim ke pihak kapal, **nahkoda dan kantor/operator kapal sama-sama harus memberikan ACC** sebelum kapal/perusahaan dapat mengirim Offer atau Counter Offer kepada pemilik barang.
 
-### 4.1 Status Kapal dan Tracking
+Aturan:
+- Nahkoda **ACC** + Kantor/operator **ACC** → **boleh mengirim Offer/Counter Offer**.
+- Nahkoda **ACC** + Kantor/operator **tidak ACC** → tidak boleh Offer/Counter Offer.
+- Nahkoda **tidak ACC** + Kantor/operator **ACC** → tidak boleh Offer/Counter Offer.
+- Keduanya tidak ACC → tidak boleh Offer/Counter Offer.
+
+ACC pada tahap ini **bukan berarti menerima order**. ACC hanya berarti pihak kapal bersedia mengikuti proses penawaran. Order baru menjadi terpilih/terikat setelah pemilik barang memilih Offer dan proses Booking/Order dilakukan.
+
+Secara otoritas, kantor/operator kapal merupakan pihak yang memiliki kewenangan akhir sebagai pihak yang bertanggung jawab atas kapal, tetapi persetujuan nahkoda tetap wajib. Dengan demikian, kantor tidak dapat memaksa kapal yang nahkodanya tidak bersedia, dan nahkoda tidak dapat mengajukan penawaran tanpa persetujuan kantor.
+
+### 4.2 Status Kapal dan Tracking
 Status operasional kapal sebaiknya **sebisa mungkin diperbarui otomatis** berdasarkan data posisi/tracking kapal, bukan bergantung sepenuhnya pada input manual nahkoda atau kantor pusat.
 
 GoShip direncanakan dapat mengintegrasikan sumber data GPS/AIS/tracking kapal melalui API atau mekanisme integrasi resmi yang tersedia dari perangkat/provider tracking kapal. Ketersediaan API dan hak akses harus diverifikasi per provider sebelum implementasi production.
@@ -61,7 +72,7 @@ Data tracking dapat digunakan untuk membantu menentukan:
 
 Untuk prototype, tracking dan perubahan status dapat disimulasikan terlebih dahulu.
 
-### 4.2 Status Operasional yang Memerlukan Konfirmasi
+### 4.3 Status Operasional yang Memerlukan Konfirmasi
 Tidak semua status dapat ditentukan hanya dari GPS/AIS. Status aktivitas seperti **Sedang Muat**, **Sedang Bongkar**, **Selesai Muat**, atau **Selesai Bongkar** memerlukan input dari pihak kapal dan konfirmasi operator/perusahaan.
 
 Workflow status operasional:
@@ -75,6 +86,8 @@ Workflow status operasional:
 Pemilik barang hanya melihat status operasional sebagai status resmi setelah mendapat approval dari operator.
 
 Setiap perubahan status penting harus memiliki **audit trail**, minimal berupa timestamp, pihak yang mengajukan perubahan, pihak yang menyetujui/menolak, status sebelum dan sesudah, serta catatan bila diperlukan.
+
+Jenis kapal tidak harus selalu dipilih manual oleh pemilik barang. GoShip dapat menentukan kapal yang compatible berdasarkan kebutuhan muatan dan parameter matching. Untuk prototype, aturan matching dapat dibuat sederhana terlebih dahulu.
 
 ## 5. Mekanisme Penawaran
 Beberapa perusahaan kapal dapat merespons kebutuhan pengiriman yang sama.
@@ -111,7 +124,7 @@ Setelah pemilik barang memilih salah satu penawaran, proses dilanjutkan ke **Boo
 
 Alur inti prototype:
 
-`Request → Matching → Bidding/Offer → Selection → Booking/Order`
+`Request → Matching → Dual Approval → Bidding/Offer → Selection → Booking/Order`
 
 ## 6. Data Master Perusahaan dan Kapal
 ### 6.1 Perusahaan/Operator
