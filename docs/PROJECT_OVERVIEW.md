@@ -61,6 +61,21 @@ Data tracking dapat digunakan untuk membantu menentukan:
 
 Untuk prototype, tracking dan perubahan status dapat disimulasikan terlebih dahulu.
 
+### 4.2 Status Operasional yang Memerlukan Konfirmasi
+Tidak semua status dapat ditentukan hanya dari GPS/AIS. Status aktivitas seperti **Sedang Muat**, **Sedang Bongkar**, **Selesai Muat**, atau **Selesai Bongkar** memerlukan input dari pihak kapal dan konfirmasi operator/perusahaan.
+
+Workflow status operasional:
+1. **Nahkoda/pihak kapal** mengajukan perubahan status.
+2. Sistem membuat status menjadi **Pending Approval**.
+3. **Admin kantor/operator kapal** menerima notifikasi.
+4. Admin melakukan review/konfirmasi, termasuk pengecekan lapangan bila diperlukan.
+5. Jika disetujui, status menjadi **Approved/Verified** dan dipublikasikan kepada pemilik barang.
+6. Jika ditolak, status dikembalikan untuk koreksi atau tetap pada status sebelumnya.
+
+Pemilik barang hanya melihat status operasional sebagai status resmi setelah mendapat approval dari operator.
+
+Setiap perubahan status penting harus memiliki **audit trail**, minimal berupa timestamp, pihak yang mengajukan perubahan, pihak yang menyetujui/menolak, status sebelum dan sesudah, serta catatan bila diperlukan.
+
 ## 5. Mekanisme Penawaran
 Beberapa perusahaan kapal dapat merespons kebutuhan pengiriman yang sama.
 
