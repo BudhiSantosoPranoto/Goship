@@ -44,7 +44,7 @@ Sistem mencari kapal yang sesuai berdasarkan antara lain:
 - jenis kapal dan kesesuaian dengan kargo;
 - jadwal/kesiapan kapal.
 
-Order yang cocok dikirim sebagai notifikasi kepada perusahaan/operator kapal dan, bila diperlukan, nahkoda/pihak kapal yang berwenang.
+Order yang cocok dikirim sebagai notifikasi kepada **semua kapal/operator yang eligible hasil matching**, bukan satu per satu secara bergiliran. Untuk prototype, jumlah kandidat dapat dibatasi (misalnya 10 kandidat terbaik) berdasarkan skor matching agar notifikasi tetap relevan.
 
 Jenis kapal tidak harus selalu dipilih manual oleh pemilik barang. GoShip dapat menentukan kapal yang compatible berdasarkan kebutuhan muatan dan parameter matching. Untuk prototype, aturan matching dapat dibuat sederhana terlebih dahulu.
 
@@ -57,7 +57,18 @@ Contoh:
 - Pemilik barang dapat menerima atau melakukan counter-offer, misalnya Rp225.000/ton.
 - Perusahaan lain yang memenuhi syarat juga dapat memberikan penawaran.
 
-Model yang disarankan adalah **tender/RFQ singkat**, bukan percakapan tawar-menawar tanpa batas. Pemilik barang kemudian membandingkan dan memilih penawaran terbaik.
+Model yang disarankan adalah **tender/RFQ singkat**, bukan percakapan tawar-menawar tanpa batas.
+
+### 5.1 Pemilihan Penawaran
+Satu request dapat menerima beberapa penawaran dari operator kapal. **Pemilik barang menjadi pihak yang menentukan penawaran/operator yang dipilih.**
+
+Pemilik barang tidak wajib memilih harga paling murah. Perbandingan dapat mempertimbangkan harga, rating/reputasi, ETA, kapasitas, posisi kapal, performa, dan faktor lainnya.
+
+Setelah pemilik barang memilih salah satu penawaran, proses dilanjutkan ke **Booking/Order**.
+
+Alur inti prototype:
+
+`Request → Matching → Bidding/Offer → Selection → Booking/Order`
 
 ## 6. Dasar Pemilihan
 Pemilihan kapal/operator sebaiknya tidak hanya berdasarkan harga. Faktor yang dapat ditampilkan:
