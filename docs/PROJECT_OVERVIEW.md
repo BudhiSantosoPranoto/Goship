@@ -59,7 +59,22 @@ Contoh:
 
 Model yang disarankan adalah **tender/RFQ singkat**, bukan percakapan tawar-menawar tanpa batas.
 
-### 5.1 Pemilihan Penawaran
+### 5.1 Isi Respon/Penawaran Pihak Kapal
+Respon operator kapal terhadap request tidak hanya berisi harga. Minimal prototype perlu memuat:
+- **Kapal** yang ditawarkan;
+- **Harga penawaran**;
+- **ETA ke Pelabuhan Asal** — perkiraan waktu kapal tiba untuk melakukan pemuatan;
+- **Estimasi waktu tiba di Pelabuhan Tujuan**;
+- **Estimasi durasi perjalanan**;
+- **Kapasitas muatan kapal**;
+- **Status/keterangan kesiapan kapal**;
+- informasi teknis yang relevan bila diperlukan.
+
+Data teknis kapal seperti kecepatan ekonomis dapat menjadi data master kapal. Operator memberikan estimasi waktu berdasarkan kondisi aktual kapal, rute, dan kesiapan operasional.
+
+Dengan demikian, penawaran menggambarkan **harga + kemampuan/kapasitas + kesiapan + estimasi waktu**, bukan sekadar harga.
+
+### 5.2 Pemilihan Penawaran
 Satu request dapat menerima beberapa penawaran dari operator kapal. **Pemilik barang menjadi pihak yang menentukan penawaran/operator yang dipilih.**
 
 Pemilik barang tidak wajib memilih harga paling murah. Perbandingan dapat mempertimbangkan harga, rating/reputasi, ETA, kapasitas, posisi kapal, performa, dan faktor lainnya.
