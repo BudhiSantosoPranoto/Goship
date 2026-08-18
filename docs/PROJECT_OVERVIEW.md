@@ -124,10 +124,68 @@ Setelah pemilik barang memilih salah satu penawaran, proses dilanjutkan ke **Boo
 
 Alur inti prototype:
 
-`Request → Matching → Dual Approval → Bidding/Offer → Selection → Booking/Order`
+`Request → Matching → Dual Approval → Bidding/Offer → Selection → Booking/Order → Escrow → Delivery Confirmation → Release`
 
-## 6. Data Master Perusahaan dan Kapal
-### 6.1 Perusahaan/Operator
+## 6. Escrow dan Penyelesaian Transaksi
+GoShip direncanakan menggunakan konsep **escrow** untuk mengurangi risiko pembayaran bagi pemilik barang dan risiko pekerjaan tanpa kepastian pembayaran bagi operator kapal.
+
+### 6.1 Prinsip Escrow
+Setelah pemilik barang memilih Offer dan kedua pihak menyepakati transaksi:
+1. Sistem membuat **Order/Checkout**.
+2. Pemilik barang diberi batas waktu untuk melakukan pembayaran ke mekanisme escrow.
+3. **Transaksi belum dianggap aktif/confirmed sebelum dana berhasil diterima dan status escrow terkonfirmasi.**
+4. Setelah dana terkonfirmasi di escrow, order menjadi **Paid / Confirmed** dan operator kapal memperoleh kepastian bahwa dana telah diamankan.
+5. Kapal menjalankan pekerjaan pengangkutan.
+6. Setelah delivery memenuhi milestone yang disepakati, dana escrow dilepaskan kepada operator kapal.
+
+Untuk prototype, **saran awal batas pembayaran adalah 1 x 24 jam sejak checkout/deal**. Jika nilai transaksi besar dan karakteristik B2B membuat proses approval pembayaran lebih lama, parameter ini sebaiknya dapat dikonfigurasi (misalnya 24–48 jam), bukan hard-coded.
+
+Jika batas waktu pembayaran lewat tanpa dana terkonfirmasi, Order otomatis **Expired/Cancelled** dan kapal kembali dapat ditawarkan kepada request lain sesuai aturan availability.
+
+### 6.2 Escrow Tidak Sebaiknya Menggunakan Rekening Operasional GoShip Biasa
+Untuk production, GoShip **tidak boleh menganggap rekening bank operasional perusahaan sebagai escrow hanya karena dana ditampung sementara**. Mekanisme penampungan, pemrosesan, dan pelepasan dana harus menggunakan struktur yang sesuai dengan regulasi sistem pembayaran dan pihak berizin/mitra yang tepat.
+
+Bank Indonesia mengatur industri sistem pembayaran dan perizinan Penyedia Jasa Pembayaran (PJP); pihak yang bertindak sebagai PJP harus memperoleh izin BI. urlBank Indonesia — Perizinan PJPturn0search6 PBI No. 10 Tahun 2025 tentang Pengaturan Industri Sistem Pembayaran berlaku sejak 31 Maret 2026 dan mengatur antara lain aktivitas, produk, kerja sama, manajemen risiko, serta penyelenggara penunjang sistem pembayaran. citeturn0search0
+
+Karena itu, desain production harus memilih model kerja sama dengan **bank/PJP/payment provider yang secara legal dapat menyediakan mekanisme escrow/penampungan dan settlement**, lalu GoShip menjadi platform transaksi/orchestrator di atasnya. Detail legal, struktur rekening, KYC/AML, settlement, dan perlindungan dana harus divalidasi bersama penasihat hukum dan provider pembayaran sebelum production.
+
+### 6.3 Kapan Escrow Dicairkan
+Prinsip yang disepakati untuk GoShip:
+
+> **Dana tidak dicairkan hanya karena kapal tiba. Dana dicairkan setelah kewajiban pengangkutan yang menjadi tanggung jawab kapal telah terpenuhi sesuai milestone delivery yang disepakati.**
+
+Untuk prototype, milestone utama dapat berupa:
+- kapal tiba di Pelabuhan Asal;
+- selesai muat;
+- kapal berangkat;
+- tiba di Pelabuhan Tujuan;
+- selesai bongkar;
+- bukti delivery/serah-terima diterima.
+
+Status delivery dapat memerlukan bukti dan/atau konfirmasi pihak terkait. Mekanisme release sebaiknya memiliki **dispute window** agar pemilik barang masih dapat melaporkan masalah yang memang berkaitan dengan jasa pengangkutan sebelum dana otomatis dilepas.
+
+### 6.4 Batas Tanggung Jawab GoShip dan Kapal Terhadap Kualitas Barang
+Prinsip bisnis yang dipilih adalah bahwa **kapal/operator berperan sebagai penyedia jasa pengangkutan, bukan pihak yang menentukan kualitas atau kesesuaian komersial barang antara penjual dan pembeli**.
+
+Dengan demikian, perselisihan seperti:
+- kualitas batu bara tidak sesuai;
+- kadar/grade berbeda;
+- harga jual barang;
+- spesifikasi komersial barang;
+- kesesuaian barang dengan kontrak jual beli;
+
+pada dasarnya merupakan ranah **penjual dan pembeli**, bukan urusan komersial kapal.
+
+Namun, ini **bukan berarti kapal tidak perlu mengetahui barang sama sekali**. Kapal/operator tetap harus mengetahui informasi yang diperlukan untuk keselamatan, legalitas, dokumen pengangkutan, manifest, kapasitas, penanganan muatan, dan persyaratan pelabuhan/otoritas. Untuk cargo tertentu, informasi sifat/klasifikasi muatan juga dapat menjadi wajib secara operasional maupun hukum.
+
+Karena itu batas tanggung jawab GoShip sebaiknya dirumuskan sebagai:
+
+> **Kapal bertanggung jawab atas jasa pengangkutan dan proses muat/bongkar sesuai order serta kewajiban keselamatan/legalitasnya. Kapal tidak bertanggung jawab atas kualitas atau nilai komersial barang di luar kewajiban yang secara eksplisit menjadi tanggung jawab carrier berdasarkan perjanjian pengangkutan dan hukum yang berlaku.**
+
+GoShip juga tidak boleh menjadikan "barang sudah sampai" sebagai satu-satunya bukti bahwa semua kewajiban telah selesai. Untuk release escrow, sistem harus menggunakan **milestone delivery + bukti/konfirmasi yang relevan + dispute window**.
+
+## 7. Data Master Perusahaan dan Kapal
+### 7.1 Perusahaan/Operator
 Data utama perusahaan:
 - nama perusahaan/PT;
 - nama singkat;
@@ -140,7 +198,7 @@ Data utama perusahaan:
 - status verifikasi GoShip;
 - status aktif/nonaktif.
 
-### 6.2 Kapal
+### 7.2 Kapal
 Data master kapal yang disiapkan minimal untuk prototype:
 - nama kapal;
 - IMO Number (bila ada);
@@ -158,7 +216,7 @@ Data master kapal yang disiapkan minimal untuk prototype:
 - jenis cargo yang dapat diangkut;
 - foto kapal.
 
-### 6.3 Legalitas/Dokumen
+### 7.3 Legalitas/Dokumen
 Data dokumen kapal dapat mencakup:
 - jenis dokumen;
 - nomor dokumen;
@@ -170,7 +228,7 @@ Data dokumen kapal dapat mencakup:
 
 Data dokumen menjadi bagian penting dari proses verifikasi kapal GoShip.
 
-### 6.4 Data Operasional
+### 7.4 Data Operasional
 Data operasional dipisahkan dari master kapal karena nilainya berubah:
 - status kapal (`Available`, `On Trip`, `Loading`, `Unloading`, `Maintenance`, `Inactive`, dll.);
 - posisi kapal;
@@ -182,7 +240,7 @@ Data operasional dipisahkan dari master kapal karena nilainya berubah:
 
 Status dan posisi diharapkan dapat diperbarui otomatis melalui integrasi tracking jika tersedia; input manual dapat menjadi fallback/override dengan aturan audit yang jelas.
 
-## 7. Dasar Pemilihan
+## 8. Dasar Pemilihan
 Pemilihan kapal/operator sebaiknya tidak hanya berdasarkan harga. Faktor yang dapat ditampilkan:
 - harga penawaran;
 - reputasi/rating perusahaan;
@@ -193,7 +251,7 @@ Pemilihan kapal/operator sebaiknya tidak hanya berdasarkan harga. Faktor yang da
 - estimasi waktu tiba/availability;
 - status dan kelengkapan dokumen.
 
-## 8. Multi-Level Operator
+## 9. Multi-Level Operator
 Satu perusahaan dapat memiliki banyak kapal. Karena itu sistem perlu membedakan:
 - perusahaan/operator kapal;
 - armada/kapal milik atau dikelola perusahaan;
@@ -202,7 +260,7 @@ Satu perusahaan dapat memiliki banyak kapal. Karena itu sistem perlu membedakan:
 
 Notifikasi dan proses approval dapat melibatkan kantor pusat maupun user kapal sesuai aturan perusahaan.
 
-## 9. Fitur Pengembangan Lanjutan
+## 10. Fitur Pengembangan Lanjutan
 Roadmap awal yang potensial:
 - tracking posisi kapal/AIS;
 - status kapal real-time;
@@ -215,7 +273,9 @@ Roadmap awal yang potensial:
 - verifikasi dokumen dan masa berlaku dokumen;
 - sistem matching dan rekomendasi kapal.
 
-## 10. Nilai Utama GoShip
+## 11. Nilai Utama GoShip
 Nilai strategis GoShip bukan sekadar mempertemukan pemilik barang dan kapal, tetapi membangun **database armada dan availability kapal yang terverifikasi** sehingga pemilik barang dapat menemukan kapasitas angkutan yang terpercaya secara lebih cepat dan transparan.
 
 > Catatan: angka harga dalam contoh di atas hanya ilustrasi. Satuan tarif (per ton, per kg, per trip, dll.) harus ditentukan secara eksplisit dalam desain bisnis dan sistem sebelum implementasi.
+
+> Catatan: desain escrow dan pembagian tanggung jawab pengangkutan harus divalidasi secara legal sebelum production, khususnya terkait regulasi sistem pembayaran, kontrak pengangkutan, dokumen cargo/manifest, dan tanggung jawab carrier.
