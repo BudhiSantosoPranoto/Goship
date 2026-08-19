@@ -20,6 +20,15 @@ Informasi utama request:
 - Catatan kebutuhan.
 - Dokumen pendukung/cargo documents bila diperlukan.
 
+### 3.1 Cargo Document Readiness
+Tombol **Cari Kapal** hanya aktif apabila data wajib request dan **dokumen cargo/pengiriman yang diwajibkan untuk tahap pencarian** sudah di-upload.
+
+Tidak semua dokumen harus selalu lengkap pada tahap ini apabila dokumen tertentu memang baru tersedia pada tahapan berikutnya. Sistem membedakan:
+- **Dokumen wajib tahap Request/Search** — harus tersedia sebelum pemilik barang dapat mencari kapal.
+- **Dokumen wajib tahap Booking/Checkout** — dapat dilengkapi setelah mendapatkan kapal, tetapi harus lengkap sebelum pembayaran escrow.
+
+GoShip memvalidasi **kelengkapan dokumen sesuai tahap**, bukan memverifikasi kualitas/keaslian spesifikasi komersial barang secara fisik.
+
 Budget > 0 berarti pemilik barang memberikan target harga dan operator dapat menerima atau melakukan counter-offer. Budget 0/kosong berarti operator menentukan harga penawarannya sendiri.
 
 ## 4. Matching Kapal
