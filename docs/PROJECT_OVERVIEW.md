@@ -29,6 +29,15 @@ Tidak semua dokumen harus selalu lengkap pada tahap ini apabila dokumen tertentu
 
 GoShip memvalidasi **kelengkapan dokumen sesuai tahap**, bukan memverifikasi kualitas/keaslian spesifikasi komersial barang secara fisik.
 
+### 3.2 Document Verification
+Pengecekan kelengkapan dokumen dirancang menggunakan pendekatan **hybrid: Rule Engine + AI-assisted document checking**.
+
+- **Rule Engine** menangani pemeriksaan deterministik seperti keberadaan dokumen wajib, format file, field wajib, nomor dokumen, masa berlaku, expiry, duplikasi, dan kecocokan data yang dapat ditentukan secara pasti.
+- **AI Document Checker** membantu mengenali jenis dokumen, OCR/document parsing, mengambil informasi dari dokumen, membandingkan informasi antar-dokumen, serta memberikan flag apabila ditemukan ketidakkonsistenan atau hal yang perlu ditinjau.
+- Hasil AI bukan hakim final untuk keputusan berisiko tinggi. Sistem dapat menghasilkan status seperti **PASS**, **WARNING**, atau **REVIEW**, dengan **manual review sebagai fallback** bila diperlukan.
+
+Prinsipnya, AI membantu proses verifikasi dokumen agar lebih cepat dan cerdas, sementara aturan bisnis tetap menjadi pengendali keputusan sistem.
+
 Budget > 0 berarti pemilik barang memberikan target harga dan operator dapat menerima atau melakukan counter-offer. Budget 0/kosong berarti operator menentukan harga penawarannya sendiri.
 
 ## 4. Matching Kapal
